@@ -5,93 +5,40 @@ Demo::Demo() {}
 Demo::~Demo() {}
 
 int main() {
-	// Default sprite information
-	float size = 1.0f;
-	float dx = -0.5f; //starting corner X
-	float dy = -0.5f; //starting corner Y
-	float depth = 0.0f; // Z-index
-
-	// Default sprite vertice coordinates
-	GLfloat spriteVertices[18] = {
-		dx + 0.0f,  dy + size, depth,
-		dx + 0.0f, dy + 0.0f, depth,
-		dx + size, dy + 0.0f, depth,
-		dx + size, dy + size, depth,
-		dx + size, dy + 0.0f, depth,
-		dx + 0.0f,  dy + size, depth
-	};
-
-	// Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-	GLfloat cubeVertices[] = {
-		-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-		-1.0f,-1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f, // triangle 1 : end
-		1.0f, 1.0f,-1.0f, // triangle 2 : begin
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f, // triangle 2 : end
-		1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f,-1.0f,
-		1.0f,-1.0f,-1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f,-1.0f, 1.0f
-	};
-
 	engine::Window window;
 	engine::GraphicsSystem graphics;
 
 	GLFWwindow* app = window.CreateWindow(1920/2, 1080/2);
-	int spriteShader = graphics.CreateShader(spriteVertices);
-	int cubeShader = graphics.CreateShader(cubeVertices);
+	GLuint spriteShader = graphics.CreateShader(0);
+	//GLuint cubeShader = graphics.CreateShader(1);
+
+	int texture = graphics.loadTexture((char*)"wall.jpg");
+
+	int rotX = 0;
+	int rotY = 0;
+	int rotZ = 0;
 
 	// render loop
-	// -----------
 	while (!glfwWindowShouldClose(app))
 	{
-		// input
-		//app.processInput(app);
-
 		// render
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		graphics.ClearScreen(0.2f, 0.3f, 0.3f, false);
 
-		// draw rectangle
-		graphics.DrawSprite(spriteShader);
-		//graphics.DrawCube(cubeShader);
+		// draw
+		graphics.DrawSprite(spriteShader, texture);
+		//graphics.DrawCube(cubeShader, texture);
+		//graphics.transform(spriteShader, (float)glfwGetTime(), 0.0f, 0.0f, 0.0f, rotX, rotY, rotZ, 1.0f);
+		//graphics.moveCamera();
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(app);
 		glfwPollEvents();
+
+		rotX++;
+		rotZ--;
 	}
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
-	// ------------------------------------------------------------------
 	glfwTerminate();
 	return 0;
 }

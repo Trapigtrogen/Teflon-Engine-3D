@@ -19,7 +19,6 @@ namespace engine {
 			glfwTerminate();
 		}
 		glfwMakeContextCurrent(window);
-		//glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 		// glad: load all OpenGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

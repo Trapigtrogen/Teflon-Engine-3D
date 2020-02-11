@@ -36,14 +36,17 @@
     <ClInclude Include="..\include\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\external\stb_image.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\GraphicsSystem.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Window.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\functionality.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\stb_image.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="..\src\GraphicsSystem.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\functionality.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
