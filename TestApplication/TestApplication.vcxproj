@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="..\external\glad.c" />
     <ClCompile Include="Demo.cpp" />
-    <ClCompile Include="testmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Demo.h" />

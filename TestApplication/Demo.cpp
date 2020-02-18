@@ -20,8 +20,7 @@ int main() {
 	int rotZ = 0;
 
 	// render loop
-	while (!glfwWindowShouldClose(app))
-	{
+	while (!glfwWindowShouldClose(app)) {
 		// render
 		graphics.ClearScreen(app, 0.2f, 0.2f, 0.22f, true);
 

@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h> 
 #include <iostream>
 #include <GraphicsSystem.h>
+#include <InputManager.h>
 
 namespace engine {
 	class GraphicsSystem;
@@ -13,10 +14,9 @@ namespace engine {
 		~Window();
 
 		GLFWwindow* CreateWindow(int windowWidth, int windowHeight);
-		int GetWindowSize();
 		void ProcessInput(GLFWwindow *window);
 
-		//InputManager* input;
+		InputManager* input;
 		Functionality* functions;
 	private:
 		
