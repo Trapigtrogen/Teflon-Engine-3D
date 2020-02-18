@@ -13,7 +13,7 @@ namespace engine {
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		// glfw window creation
-		GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "LearnOpenGL", NULL, NULL);
+		GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Testailu", NULL, NULL);
 		if (window == NULL) {
 			std::cout << "Failed to create GLFW window" << std::endl;
 			glfwTerminate();
@@ -24,6 +24,7 @@ namespace engine {
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 			std::cout << "Failed to initialize GLAD" << std::endl;
 		}
+
 		return window;
 	}
 

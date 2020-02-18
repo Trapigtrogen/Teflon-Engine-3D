@@ -13,6 +13,4 @@ public:
 
 	std::string loadFile(const std::string fileName);
 	void writeFile(const std::string fileName, const std::string string);
-private:
-
 };

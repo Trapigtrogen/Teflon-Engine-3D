@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{f042cb84-27eb-40e3-bb94-40b444840a20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\io">
+      <UniqueIdentifier>{d59cef78-4439-4ada-81ea-98485733d646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\io">
+      <UniqueIdentifier>{4b1053bc-c0f1-4edd-8db7-a268db7c0a0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

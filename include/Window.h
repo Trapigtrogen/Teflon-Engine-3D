@@ -13,8 +13,12 @@ namespace engine {
 		~Window();
 
 		GLFWwindow* CreateWindow(int windowWidth, int windowHeight);
+		int GetWindowSize();
 		void ProcessInput(GLFWwindow *window);
+
+		//InputManager* input;
+		Functionality* functions;
 	private:
-		GraphicsSystem*		m_graphics;
+		
 	};
 }
