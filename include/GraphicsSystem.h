@@ -12,7 +12,6 @@
 #include <fstream>
 
 namespace engine {
-
 	class GraphicsSystem {
 	public:
 		GraphicsSystem();
@@ -28,66 +27,43 @@ namespace engine {
 
 		int loadTexture(char* filename);
 
+		// Object movement
 		void transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ);
 		void transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale);
 
-		void moveCamera();
+		// Camera movement
+		void MoveCamera(float posX, float posY, float posZ, float targetX, float targetY, float targetZ);
+		void MoveCameraContinuous(float posX, float posY, float posZ, float targetX, float targetY, float targetZ);
+
+		void RotateCamera(float rotX, float rotY, float rotZ);
+		void RotateCameraContinuous(float rotX, float rotY, float rotZ);
+
+		void MoveCameraForwards(float speed);
+		void MoveCameraBackwards(float speed);
+		void MoveCameraRight(float speed);
+		void MoveCameraLeft(float speed);
+		
+		void RotateCameraUp(float speed);
+		void RotateCameraDown(float speed);
+		void RotateCameraRight(float speed);
+		void RotateCameraLeft(float speed);
 
 		Functionality *functions;
 	private:
-		glm::mat4 m_view;
-		glm::mat4 m_projection;
-		glm::mat4 m_model;
+		glm::mat4 view;
+		glm::mat4 projection;
+		glm::mat4 model;
 
+		glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-		float m_cam[2] = {0};
-		const float radius = 10.0f;
+		glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		unsigned int indices[6] = {
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 		};
-
-		// Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-		// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-		/*GLfloat cubeVertices[108] = {
-			-0.5f,-0.5f,-0.5f, // triangle 1 : begin
-			-0.5f,-0.5f, 0.5f,
-			-0.5f, 0.5f, 0.5f, // triangle 1 : end
-			0.5f, 0.5f,-0.5f, // triangle 2 : begin
-			-0.5f,-0.5f,-0.5f,
-			-0.5f, 0.5f,-0.5f, // triangle 2 : end
-			0.5f,-0.5f, 0.5f,
-			-0.5f,-0.5f,-0.5f,
-			0.5f,-0.5f,-0.5f,
-			0.5f, 0.5f,-0.5f,
-			0.5f,-0.5f,-0.5f,
-			-0.5f,-0.5f,-0.5f,
-			-0.5f,-0.5f,-0.5f,
-			-0.5f, 0.5f, 0.5f,
-			-0.5f, 0.5f,-0.5f,
-			0.5f,-0.5f, 0.5f,
-			-0.5f,-0.5f, 0.5f,
-			-0.5f,-0.5f,-0.5f,
-			-0.5f, 0.5f, 0.5f,
-			-0.5f,-0.5f, 0.5f,
-			0.5f,-0.5f, 0.5f,
-			0.5f, 0.5f, 0.5f,
-			0.5f,-0.5f,-0.5f,
-			0.5f, 0.5f,-0.5f,
-			0.5f,-0.5f,-0.5f,
-			0.5f, 0.5f, 0.5f,
-			0.5f,-0.5f, 0.5f,
-			0.5f, 0.5f, 0.5f,
-			0.5f, 0.5f,-0.5f,
-			-0.5f, 0.5f,-0.5f,
-			0.5f, 0.5f, 0.5f,
-			-0.5f, 0.5f,-0.5f,
-			-0.5f, 0.5f, 0.5f,
-			0.5f, 0.5f, 0.5f,
-			-0.5f, 0.5f, 0.5f,
-			0.5f,-0.5f, 0.5f
-		};*/
 
 		GLfloat cubeVertices[180] = {
 			// Positions		  // Textures
@@ -133,6 +109,15 @@ namespace engine {
 			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 		};
-	};
 
+		GLfloat spriteVertices[180] = {
+			// Positions		  // Textures
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f
+		};
+	};
 }

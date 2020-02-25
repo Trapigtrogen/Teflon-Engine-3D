@@ -3,7 +3,11 @@
 #include "stb_image.h"
 
 namespace engine {
-	GraphicsSystem::GraphicsSystem() {}
+	GraphicsSystem::GraphicsSystem() {
+		view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	}
 	GraphicsSystem::~GraphicsSystem() {}
 	
 	// Clears the screen using given color
@@ -150,51 +154,75 @@ namespace engine {
 
 	void GraphicsSystem::transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ) {
 		glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::translate(trans, glm::vec3(traX, traY, traZ));
-		trans = glm::rotate(trans, angle, glm::vec3(rotX, rotY, rotZ));
-		trans = glm::scale(trans, glm::vec3(scaleX, scaleY, scaleZ));
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(traX, traY, traZ));
+		model = glm::rotate(model, angle, glm::vec3(rotX, rotY, rotZ));
+		model = glm::scale(model, glm::vec3(scaleX, scaleY, scaleZ));
 
-		unsigned int transformLoc = glGetUniformLocation(object, "transform");
-		glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+		unsigned int modelLoc = glGetUniformLocation(object, "model");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		unsigned int viewLoc = glGetUniformLocation(object, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+		unsigned int projLoc = glGetUniformLocation(object, "projection");
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	}
 
 	void GraphicsSystem::transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale) {
 		glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-		m_model = glm::mat4(1.0f);
-		m_model = glm::translate(m_model, glm::vec3(traX, traY, traZ));
-		m_model = glm::rotate(m_model, angle, glm::vec3(rotX, rotY, rotZ));
-		m_model = glm::scale(m_model, glm::vec3(scale, scale, scale));
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(traX, traY, traZ));
+		model = glm::rotate(model, angle, glm::vec3(rotX, rotY, rotZ));
+		model = glm::scale(model, glm::vec3(scale, scale, scale));
 
 		unsigned int modelLoc = glGetUniformLocation(object, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(m_model));
-
-
-		m_view = glm::mat4(1.0f);
-		m_view = glm::translate(m_view, glm::vec3(0.0f, 0.0f, -3.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
 		unsigned int viewLoc = glGetUniformLocation(object, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(m_view));
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-		m_projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-		//glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 		unsigned int projLoc = glGetUniformLocation(object, "projection");
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(m_projection));
+		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	}
 
-	void GraphicsSystem::moveCamera(){
-		glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-		glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
-
-		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-		glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
-		glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
-
-		m_cam[0] = sin(glfwGetTime()) * radius;
-		m_cam[1] = cos(glfwGetTime()) * radius;
-
-		m_view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	void GraphicsSystem::MoveCameraContinuous(float posX, float posY, float posZ, float targetX, float targetY, float targetZ) {
+		cameraPos += glm::vec3(posX, posY, posZ);
+		cameraTarget += glm::vec3(targetX, targetY, targetZ);
+		std::cout << cameraPos.x << " - " << cameraPos.y << " - " << cameraPos.z << "\n";
+		
+		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+		unsigned int viewLoc = glGetUniformLocation(0, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	}
+	
+	void GraphicsSystem::MoveCamera(float posX, float posY, float posZ, float targetX, float targetY, float targetZ) {
+		cameraPos = glm::vec3(posX, posY, posZ);
+		cameraTarget = glm::vec3(targetX, targetY, targetZ);
+		
+		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+		unsigned int viewLoc = glGetUniformLocation(0, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	}
+	
+	void GraphicsSystem::MoveCameraForwards(float speed) {
+		glm::vec3 moveVector = cameraFront * speed;
+		MoveCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::MoveCameraBackwards(float speed) {
+		glm::vec3 moveVector = -cameraFront * speed;
+		MoveCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::MoveCameraLeft(float speed) {
+		glm::vec3 moveVector = -glm::normalize(glm::cross(cameraFront, cameraUp)) * speed;
+		MoveCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::MoveCameraRight(float speed) {
+		glm::vec3 moveVector = glm::normalize(glm::cross(cameraFront, cameraUp)) * speed;
+		MoveCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
 	}
 
 }

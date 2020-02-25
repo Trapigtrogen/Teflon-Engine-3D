@@ -6,19 +6,20 @@
 #include <InputManager.h>
 
 namespace engine {
-	class GraphicsSystem;
-
 	class Window {
 	public:
 		Window();
 		~Window();
 
-		GLFWwindow* CreateWindow(int windowWidth, int windowHeight);
-		void ProcessInput(GLFWwindow *window);
+		GLFWwindow* CreateWindow(int windowWidth, int windowHeight, bool fullscreen = 0);
 
-		InputManager* input;
+		InputManager input;
 		Functionality* functions;
 	private:
-		
+		GraphicsSystem* m_graphics;
+		GLFWwindow* appWindow;
+
+		const GLFWvidmode* monitorInfo;
+		GLFWmonitor* monitorContext;
 	};
 }
