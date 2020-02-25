@@ -186,24 +186,40 @@ namespace engine {
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	}
 
-	void GraphicsSystem::MoveCameraContinuous(float posX, float posY, float posZ, float targetX, float targetY, float targetZ) {
+	void GraphicsSystem::MoveCameraContinuous(float posX, float posY, float posZ) {
 		cameraPos += glm::vec3(posX, posY, posZ);
-		cameraTarget += glm::vec3(targetX, targetY, targetZ);
-		std::cout << cameraPos.x << " - " << cameraPos.y << " - " << cameraPos.z << "\n";
+		cameraTarget += glm::vec3(posX, posY, posZ);
 		
 		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 		unsigned int viewLoc = glGetUniformLocation(0, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	}
 	
-	void GraphicsSystem::MoveCamera(float posX, float posY, float posZ, float targetX, float targetY, float targetZ) {
+	void GraphicsSystem::MoveCamera(float posX, float posY, float posZ) {
 		cameraPos = glm::vec3(posX, posY, posZ);
-		cameraTarget = glm::vec3(targetX, targetY, targetZ);
+		cameraTarget = glm::vec3(posX, posY, posZ);
 		
 		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 		unsigned int viewLoc = glGetUniformLocation(0, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	}
+	
+	void GraphicsSystem::RotateCameraContinuous(float posX, float posY, float posZ) {
+		cameraPos += glm::vec3(posX, posY, posZ);
+		
+		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+		unsigned int viewLoc = glGetUniformLocation(0, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	}
+	
+	void GraphicsSystem::RotateCamera(float posX, float posY, float posZ) {
+		cameraPos = glm::vec3(posX, posY, posZ);
+		
+		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+		unsigned int viewLoc = glGetUniformLocation(0, "view");
+		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	}
+
 	
 	void GraphicsSystem::MoveCameraForwards(float speed) {
 		glm::vec3 moveVector = cameraFront * speed;
@@ -223,6 +239,37 @@ namespace engine {
 	void GraphicsSystem::MoveCameraRight(float speed) {
 		glm::vec3 moveVector = glm::normalize(glm::cross(cameraFront, cameraUp)) * speed;
 		MoveCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::MoveCameraUp(float speed) {
+		glm::vec3 moveVector = cameraUp * speed;
+		MoveCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::MoveCameraDown(float speed) {
+		glm::vec3 moveVector = -cameraUp * speed;
+		MoveCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+
+
+	void GraphicsSystem::RotateCameraUp(float speed) {
+		glm::vec3 moveVector = cameraFront * speed;
+		RotateCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::RotateCameraDown(float speed) {
+		glm::vec3 moveVector = -cameraFront * speed;
+		RotateCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::RotateCameraLeft(float speed) {
+		glm::vec3 moveVector = -glm::normalize(glm::cross(cameraFront, cameraUp)) * speed;
+		RotateCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
+	}
+	
+	void GraphicsSystem::RotateCameraRight(float speed) {
+		glm::vec3 moveVector = glm::normalize(glm::cross(cameraFront, cameraUp)) * speed;
+		RotateCameraContinuous(moveVector.x, moveVector.y, moveVector.z);
 	}
 
 }

@@ -38,7 +38,7 @@ int main() {
 		graphics.DrawCube(cubeShader2, texture);
 		graphics.transform(cubeShader2, (float)(glfwGetTime() / 2.0f), -1.5f, -1.0f, -1.0f, -rotX, rotY, rotZ, 0.5f);
 
-		graphics.MoveCameraContinuous(0.0f, 0.0f, 0.0f);
+		//graphics.MoveCameraContinuous(0.0f, 0.0f, 0.0f);
 		//graphics.MoveCamera(0.0f, 0.0f, 3.0f);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -53,8 +53,10 @@ int main() {
 			graphics.MoveCameraLeft(cameraSpeed);
 		if (window.input.GetKey(GLFW_KEY_D))
 			graphics.MoveCameraRight(cameraSpeed);
-		
-
+		if (window.input.GetKey(GLFW_KEY_E))
+			graphics.MoveCameraUp(cameraSpeed);
+		if (window.input.GetKey(GLFW_KEY_Q))
+			graphics.MoveCameraDown(cameraSpeed);
 
 		window.input.ProcessInput();
 	}

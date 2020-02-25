@@ -32,8 +32,8 @@ namespace engine {
 		void transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale);
 
 		// Camera movement
-		void MoveCamera(float posX, float posY, float posZ, float targetX, float targetY, float targetZ);
-		void MoveCameraContinuous(float posX, float posY, float posZ, float targetX, float targetY, float targetZ);
+		void MoveCamera(float posX, float posY, float posZ);
+		void MoveCameraContinuous(float posX, float posY, float posZ);
 
 		void RotateCamera(float rotX, float rotY, float rotZ);
 		void RotateCameraContinuous(float rotX, float rotY, float rotZ);
@@ -42,11 +42,14 @@ namespace engine {
 		void MoveCameraBackwards(float speed);
 		void MoveCameraRight(float speed);
 		void MoveCameraLeft(float speed);
+		void MoveCameraUp(float speed);
+		void MoveCameraDown(float speed);
 		
 		void RotateCameraUp(float speed);
 		void RotateCameraDown(float speed);
 		void RotateCameraRight(float speed);
 		void RotateCameraLeft(float speed);
+		void RotateCameraRoll(float speed);
 
 		Functionality *functions;
 	private:
@@ -61,8 +64,8 @@ namespace engine {
 		glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		unsigned int indices[6] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
+			0, 1, 3, // first triangle
+			1, 2, 3  // second triangle
 		};
 
 		GLfloat cubeVertices[180] = {
