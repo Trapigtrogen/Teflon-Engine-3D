@@ -14,7 +14,7 @@ namespace engine {
 		GLFWwindow* CreateWindow(int windowWidth, int windowHeight, bool fullscreen = 0);
 
 		InputManager input;
-		Functionality* functions;
+		Functionality functions;
 	private:
 		GraphicsSystem* m_graphics;
 		GLFWwindow* appWindow;

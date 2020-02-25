@@ -32,11 +32,11 @@ namespace engine {
 		void transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale);
 
 		// Camera movement
+		void PositionCamera(float posX, float posY, float posZ);
 		void MoveCamera(float posX, float posY, float posZ);
-		void MoveCameraContinuous(float posX, float posY, float posZ);
 
-		void RotateCamera(float rotX, float rotY, float rotZ);
-		void RotateCameraContinuous(float rotX, float rotY, float rotZ);
+		void RotateCamera(float pitch, float yaw, float roll);
+		void RotateCameraContinuous(float pitch, float yaw, float roll);
 
 		void MoveCameraForwards(float speed);
 		void MoveCameraBackwards(float speed);
@@ -45,13 +45,11 @@ namespace engine {
 		void MoveCameraUp(float speed);
 		void MoveCameraDown(float speed);
 		
-		void RotateCameraUp(float speed);
-		void RotateCameraDown(float speed);
-		void RotateCameraRight(float speed);
-		void RotateCameraLeft(float speed);
-		void RotateCameraRoll(float speed);
+		void RotateCameraPitch(float angle);
+		void RotateCameraYaw(float angle);
+		void RotateCameraRoll(float angle);
 
-		Functionality *functions;
+		Functionality functions;
 	private:
 		glm::mat4 view;
 		glm::mat4 projection;
@@ -62,6 +60,8 @@ namespace engine {
 		glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 		glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		unsigned int indices[6] = {
 			0, 1, 3, // first triangle

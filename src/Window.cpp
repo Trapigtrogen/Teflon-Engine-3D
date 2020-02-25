@@ -3,7 +3,6 @@
 namespace engine {
 
 	Window::Window() {}
-
 	Window::~Window() {}
 
 	GLFWwindow* Window::CreateWindow(int windowWidth, int windowHeight, bool fullscreen) {
