@@ -197,34 +197,32 @@ namespace engine {
 	
 	void GraphicsSystem::PositionCamera(float posX, float posY, float posZ) {
 		cameraPos = glm::vec3(posX, posY, posZ);
-		cameraTarget = glm::vec3(posX, posY, posZ);
 		
 		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 		unsigned int viewLoc = glGetUniformLocation(0, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	}
-
 	
 	void GraphicsSystem::RotateCameraContinuous(float yaw, float pitch, float roll) {
-		cameraDirection.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		cameraDirection.y = sin(glm::radians(pitch));
-		cameraDirection.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-		cameraTarget += glm::normalize(cameraDirection);
-		//cameraFront += glm::normalize(cameraDirection);
 		
-		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
-		unsigned int viewLoc = glGetUniformLocation(0, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 	}
 	
-	void GraphicsSystem::RotateCamera(float posX, float posY, float posZ) {
-		cameraPos = glm::vec3(posX, posY, posZ);
-		
-		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
-		unsigned int viewLoc = glGetUniformLocation(0, "view");
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	}
+	void GraphicsSystem::RotateCamera(float yaw, float pitch, float roll) {
+		if (pitch > 89.0f)
+			pitch = 89.0f;
+		if (pitch < -89.0f)
+			pitch = -89.0f;
 
+		glm::vec3 direction;
+		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		direction.y = sin(glm::radians(pitch));
+		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+		cameraFront = glm::normalize(direction);
+		cameraTarget = glm::normalize(direction);
+
+		view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
+	}
 	
 	void GraphicsSystem::MoveCameraForwards(float speed) {
 		glm::vec3 moveVector = cameraFront * speed;

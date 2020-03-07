@@ -11,7 +11,7 @@ namespace engine {
 		Window();
 		~Window();
 
-		GLFWwindow* CreateWindow(int windowWidth, int windowHeight, bool fullscreen = 0);
+		GLFWwindow* CreateWindow(bool fullscreen = 0);
 
 		InputManager input;
 		Functionality functions;

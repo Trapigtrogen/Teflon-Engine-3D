@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\external\glad.c" />
     <ClCompile Include="Demo.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -30,7 +29,7 @@
     <ProjectGuid>{43328CC9-7508-4E87-85C1-6EFDEB965231}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TestApplication</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
