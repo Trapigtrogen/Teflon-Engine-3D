@@ -13,7 +13,9 @@ int main() {
 
 	GLFWwindow* app = window.CreateWindow();
 	glEnable(GL_DEPTH_TEST);
-	GLuint cubeShader = graphics.CreateShader("Assets/vertexShader.txt", "Assets/fragmentShader.txt");
+
+	engine::Shader cubeShader("Assets/vertexShader.txt", "Assets/fragmentShader.txt");
+
 	int texture = graphics.loadTexture((char*)"Assets/wall.jpg");
 	int texture2 = graphics.loadTexture((char*)"Assets/wall2.jpg");
 
@@ -21,9 +23,6 @@ int main() {
 	float cameraSpeed = 0;
 	int rotX = 1;
 	int rotY = 1;
-
-
-
 	float pitch = 0.0f, yaw = 0.0f, roll = 0.0f;
 
 	// render loop

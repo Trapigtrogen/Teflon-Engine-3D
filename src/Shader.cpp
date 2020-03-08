@@ -1,8 +1,9 @@
 #include <Shader.h>
 
 namespace engine {
-	Shader::Shader() {
+	Shader::Shader(const std::string vertexShaderName, const std::string fragmentShaderName) {
 		GLuint programObject = glCreateProgram();
+		id = programObject;
 
 		std::string strVertexShader = functions.loadFile(vertexShaderName);
 		GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, strVertexShader.c_str());
@@ -17,7 +18,6 @@ namespace engine {
 
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
-
 
 		// use shader
 		unsigned int VBO, VAO, EBO;
@@ -48,11 +48,9 @@ namespace engine {
 		// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
 		glBindVertexArray(0);
 
-
 		// uncomment this call to draw in wireframe polygons.
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glBindVertexArray(VAO);
-	}
 	}
 
 	GLuint Shader::LoadShader(GLenum type, const char *shaderSrc) {
@@ -73,13 +71,12 @@ namespace engine {
 			if (infoLen > 1) {
 				char* infoLog = (char*)malloc(sizeof(char) * infoLen);
 				glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
-				std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+				std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << "\n";
 				free(infoLog);
 			}
 			glDeleteShader(shader);
 			return 0;
 		}
-
 		return shader;
 	}
 }

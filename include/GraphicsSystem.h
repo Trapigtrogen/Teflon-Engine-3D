@@ -22,16 +22,14 @@ namespace engine {
 		// Clears the screen using given color
 		void ClearScreen(GLFWwindow* window, float red, float green, float blue, bool setViewport = false);
 
-		void DrawSprite(int shader, int texture);
-		void DrawCube(int shader, int texture);
-
-		GLuint CreateShader(const std::string vertexShaderName, const std::string fragmentShaderName);
+		void DrawSprite(Shader shader, int texture);
+		void DrawCube(Shader shader, int texture);
 
 		int loadTexture(char* filename);
 
 		// Object movement
-		void transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ);
-		void transform(GLuint object, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale);
+		void transform(Shader shader, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ);
+		void transform(Shader shader, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale);
 
 		// Camera movement
 		void PositionCamera(float posX, float posY, float posZ);
@@ -64,56 +62,6 @@ namespace engine {
 		glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
-
-		unsigned int indices[6] = {
-			0, 1, 3, // first triangle
-			1, 2, 3  // second triangle
-		};
-
-		GLfloat cubeVertices[180] = {
-			// Positions		  // Textures
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-		};
 
 		GLfloat spriteVertices[180] = {
 			// Positions		  // Textures
