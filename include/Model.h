@@ -16,13 +16,15 @@ namespace engine {
 	public:
 		/*  Functions   */
 		Model(char *path);
-		void Draw(Shader shader);
-	private:
+
 		/*  Model Data  */
 		std::vector<Mesh::Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 		std::vector<Mesh> meshes;
 		std::string directory;
 		bool gammaCorrection;
+
+		void Draw(Shader shader);
+	private:
 		/*  Functions   */
 		void loadModel(std::string path);
 		void processNode(aiNode *node, const aiScene *scene);

@@ -10,7 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <functionality.h>
 #include <fstream>
-#include <Mesh.h>
+#include <Model.h>
 #include <Shader.h>
 
 namespace engine {

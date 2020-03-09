@@ -14,6 +14,8 @@ int main() {
 	GLFWwindow* app = window.CreateWindow();
 	glEnable(GL_DEPTH_TEST);
 
+	//engine::Model model((char*)"Assets/nanosuit/nanosuit.obj");
+
 	engine::Shader cubeShader("Assets/vertexShader.txt", "Assets/fragmentShader.txt");
 
 	int texture = graphics.loadTexture((char*)"Assets/wall.jpg");
@@ -40,6 +42,7 @@ int main() {
 		graphics.DrawCube(cubeShader, texture);
 		graphics.transform(cubeShader, (float)(glfwGetTime() / 2.0f), -1.5f, -1.0f, -1.0f, -rotX, rotY, 0, 0.5f);
 
+		//model.Draw(cubeShader);
 
 		// Input
 		// Move camera
@@ -66,6 +69,7 @@ int main() {
 			cameraSpeed = cameraSpeedDefault * 3.0f * deltaTime;
 		else cameraSpeed = cameraSpeedDefault * deltaTime;
 
+		/*
 		// Rotate camera (not working)
 		if (window.input.GetKey(GLFW_KEY_I))
 			pitch--;
@@ -84,8 +88,8 @@ int main() {
 
 		if (window.input.GetKey(GLFW_KEY_U))
 			roll--;
-
-		//graphics.RotateCamera(pitch, yaw, roll);
+		graphics.RotateCamera(pitch, yaw, roll);
+		*/
 
 		window.input.ProcessInput();
 
