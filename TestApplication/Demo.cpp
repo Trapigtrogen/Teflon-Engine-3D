@@ -14,12 +14,14 @@ int main() {
 	GLFWwindow* app = window.CreateWindow();
 	glEnable(GL_DEPTH_TEST);
 
-	//engine::Model model((char*)"Assets/nanosuit/nanosuit.obj");
+	engine::Model kalja((char*)"Assets/kalja.fbx");
+	kalja.SetCustomTexture("Assets/wall.jpg");
 
-	engine::Shader cubeShader("Assets/vertexShader.txt", "Assets/fragmentShader.txt");
+	engine::Model suit((char*)"Assets/nanosuit/nanosuit.obj");
+	engine::Model porg((char*)"Assets/porg/porg.fbx");
 
-	int texture = graphics.loadTexture((char*)"Assets/wall.jpg");
-	int texture2 = graphics.loadTexture((char*)"Assets/wall2.jpg");
+	engine::Shader shader("Assets/vertexShader.txt", "Assets/fragmentShader.txt");
+	
 
 	float cameraSpeedDefault = 1.0f;
 	float cameraSpeed = 0;
@@ -27,22 +29,32 @@ int main() {
 	int rotY = 1;
 	float pitch = 0.0f, yaw = 0.0f, roll = 0.0f;
 
-	// render loop
+	// game loop
 	while (!glfwWindowShouldClose(app)) {
 		float deltaTime = window.functions.DeltaTime();
 
-		// render
 		graphics.ClearScreen(app, 0.2f, 0.2f, 0.22f, true);
 
 		// draw and move objects
-		graphics.DrawCube(cubeShader, texture);
-		graphics.transform(cubeShader, (float)(glfwGetTime() / 2.0f), sin(glfwGetTime() / 2.0f), 0.0f, 0.0f, rotX, rotY, 0, 0.5f);
-		graphics.DrawCube(cubeShader, texture2);
-		graphics.transform(cubeShader, (float)(glfwGetTime() / 2.0f), 0.0f, sin(glfwGetTime() / 2.0f), 1.5f, rotX, -rotY, 0, 0.5f);
-		graphics.DrawCube(cubeShader, texture);
-		graphics.transform(cubeShader, (float)(glfwGetTime() / 2.0f), -1.5f, -1.0f, -1.0f, -rotX, rotY, 0, 0.5f);
+		shader.use();
 
-		//model.Draw(cubeShader);
+		graphics.Transform(kalja, (float)(glfwGetTime() / 2.0f), sin(glfwGetTime() / 2.0f), 0.0f, 0.0f, rotX, rotY, 0, 0.3f);
+		kalja.Draw(shader);
+		
+
+		graphics.Transform(porg, (float)(glfwGetTime() / 3.0f), 0.0f, sin(glfwGetTime() / 2.0f), 1.5f, rotX, -rotY, 0, 0.8f);
+		porg.Draw(shader);
+		graphics.Transform(porg, (float)(glfwGetTime() / 0.5f), -0.3f, sin(glfwGetTime() / 2.0f), 1.5f, -rotX, rotY, 0, 0.8f);
+		porg.Draw(shader);		
+		graphics.Transform(porg, (float)(glfwGetTime() / 1.0f), 0.5f, sin(glfwGetTime() / 2.0f), 1.5f, -rotX, -rotY, 0, 0.8f);
+		porg.Draw(shader);		
+		graphics.Transform(porg, (float)(glfwGetTime() / 1.0f), -0.5f, sin(glfwGetTime() / 2.0f), 1.5f, rotX, rotY, 0, 0.8f);
+		porg.Draw(shader);
+		
+
+		graphics.Transform(suit, (float)(glfwGetTime() / 2.0f), 0.8f, -1.0f, -1.0f, -rotX, rotY, 0, 0.1f);
+		suit.Draw(shader);
+	
 
 		// Input
 		// Move camera

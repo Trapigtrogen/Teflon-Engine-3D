@@ -22,14 +22,13 @@ namespace engine {
 		// Clears the screen using given color
 		void ClearScreen(GLFWwindow* window, float red, float green, float blue, bool setViewport = false);
 
-		void DrawSprite(Shader shader, int texture);
 		void DrawCube(Shader shader, int texture);
 
 		int loadTexture(char* filename);
 
 		// Object movement
-		void transform(Shader shader, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ);
-		void transform(Shader shader, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale);
+		void Transform(Model model_, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ);
+		void Transform(Model model_, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale);
 
 		// Camera movement
 		void PositionCamera(float posX, float posY, float posZ);
@@ -62,15 +61,5 @@ namespace engine {
 		glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 
 		glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
-
-		GLfloat spriteVertices[180] = {
-			// Positions		  // Textures
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f
-		};
 	};
 }

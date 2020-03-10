@@ -2,15 +2,16 @@
 
 namespace engine {
 	Model::Model(char *path) {
-		loadModel(path);
+		LoadModel(path);
 	}
 
 	void Model::Draw(Shader shader) {
+		attachedShaderId = shader.id;
 		for (unsigned int i = 0; i < meshes.size(); i++)
 			meshes[i].Draw(shader);
 	}
 
-	void Model::loadModel(std::string path) {
+	void Model::LoadModel(std::string path) {
 		Assimp::Importer import;
 		const aiScene *scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -21,24 +22,24 @@ namespace engine {
 		}
 		directory = path.substr(0, path.find_last_of('/'));
 
-		processNode(scene->mRootNode, scene);
+		ProcessNode(scene->mRootNode, scene);
 	}
 
-	void Model::processNode(aiNode *node, const aiScene *scene) {
+	void Model::ProcessNode(aiNode *node, const aiScene *scene) {
 		// process all the node's meshes (if any)
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-			meshes.push_back(processMesh(mesh, scene));
+			meshes.push_back(ProcessMesh(mesh, scene));
 		}
 		// then do the same for each of its children
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
 		{
-			processNode(node->mChildren[i], scene);
+			ProcessNode(node->mChildren[i], scene);
 		}
 	}
 
-	Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
+	Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene) {
 		// data to fill
 		std::vector<Mesh::Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -72,15 +73,15 @@ namespace engine {
 			else
 				vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 			// tangent
-			vector.x = mesh->mTangents[i].x;
-			vector.y = mesh->mTangents[i].y;
-			vector.z = mesh->mTangents[i].z;
-			vertex.Tangent = vector;
+			//vector.x = mesh->mTangents[i].x;
+			//vector.y = mesh->mTangents[i].y;
+			//vector.z = mesh->mTangents[i].z;
+			//vertex.Tangent = vector;
 			// bitangent
-			vector.x = mesh->mBitangents[i].x;
-			vector.y = mesh->mBitangents[i].y;
-			vector.z = mesh->mBitangents[i].z;
-			vertex.Bitangent = vector;
+			//vector.x = mesh->mBitangents[i].x;
+			//vector.y = mesh->mBitangents[i].y;
+			//vector.z = mesh->mBitangents[i].z;
+			//vertex.Bitangent = vector;
 			vertices.push_back(vertex);
 		}
 		// now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
@@ -101,23 +102,23 @@ namespace engine {
 		// normal: texture_normalN
 
 		// 1. diffuse maps
-		std::vector<Mesh::Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+		std::vector<Mesh::Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 		// 2. specular maps
-		std::vector<Mesh::Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+		std::vector<Mesh::Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 		// 3. normal maps
-		std::vector<Mesh::Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+		std::vector<Mesh::Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 		// 4. height maps
-		std::vector<Mesh::Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+		std::vector<Mesh::Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
 		textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
 		// return a mesh object created from the extracted mesh data
 		return Mesh(vertices, indices, textures);
 	}
 
-	std::vector<Mesh::Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
+	std::vector<Mesh::Texture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
 		std::vector<Mesh::Texture> textures;
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
@@ -182,5 +183,37 @@ namespace engine {
 		}
 
 		return textureID;
+	}
+
+	void Model::SetCustomTexture(std::string filename) {
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+
+		int width, height, nrComponents;
+		unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		if (data) {
+			GLenum format;
+			if (nrComponents == 1)
+				format = GL_RED;
+			else if (nrComponents == 3)
+				format = GL_RGB;
+			else if (nrComponents == 4)
+				format = GL_RGBA;
+
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			stbi_image_free(data);
+		}
+		else {
+			std::cout << "Texture failed to load at path: " << filename << std::endl;
+			stbi_image_free(data);
+		}
 	}
 }

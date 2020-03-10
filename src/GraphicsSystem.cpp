@@ -23,16 +23,7 @@ namespace engine {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	}
-	
-	void GraphicsSystem::DrawSprite(Shader shader, int texture) {
-		glUseProgram(shader.id);
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
 
-		glDrawArrays(GL_TRIANGLES, 0, 12);
-	}
-	
 	void GraphicsSystem::DrawCube(Shader shader, int texture) {
 		glUseProgram(shader.id);
 
@@ -69,37 +60,38 @@ namespace engine {
 		return texture;
 	}
 
-	void GraphicsSystem::transform(Shader shader, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ) {
+	void GraphicsSystem::Transform(Model model_, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ) {
 		glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(traX, traY, traZ));
 		model = glm::rotate(model, angle, glm::vec3(rotX, rotY, rotZ));
 		model = glm::scale(model, glm::vec3(scaleX, scaleY, scaleZ));
 
-		unsigned int modelLoc = glGetUniformLocation(shader.id, "model");
+		unsigned int modelLoc = glGetUniformLocation(model_.attachedShaderId, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		unsigned int viewLoc = glGetUniformLocation(shader.id, "view");
+		unsigned int viewLoc = glGetUniformLocation(model_.attachedShaderId, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-		unsigned int projLoc = glGetUniformLocation(shader.id, "projection");
+		unsigned int projLoc = glGetUniformLocation(model_.attachedShaderId, "projection");
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	}
 
-	void GraphicsSystem::transform(Shader shader, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale) {
+	void GraphicsSystem::Transform(Model model_, float angle, float traX, float traY, float traZ, float rotX, float rotY, float rotZ, float scale) {
+		
 		glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
 		model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(traX, traY, traZ));
 		model = glm::rotate(model, angle, glm::vec3(rotX, rotY, rotZ));
 		model = glm::scale(model, glm::vec3(scale, scale, scale));
 
-		unsigned int modelLoc = glGetUniformLocation(shader.id, "model");
+		unsigned int modelLoc = glGetUniformLocation(model_.attachedShaderId, "model");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		unsigned int viewLoc = glGetUniformLocation(shader.id, "view");
+		unsigned int viewLoc = glGetUniformLocation(model_.attachedShaderId, "view");
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-		unsigned int projLoc = glGetUniformLocation(shader.id, "projection");
+		unsigned int projLoc = glGetUniformLocation(model_.attachedShaderId, "projection");
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 	}
 

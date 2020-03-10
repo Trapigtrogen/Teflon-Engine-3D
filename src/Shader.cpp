@@ -1,82 +1,116 @@
 #include <Shader.h>
 
 namespace engine {
-	Shader::Shader(const std::string vertexShaderName, const std::string fragmentShaderName) {
-		GLuint programObject = glCreateProgram();
-		id = programObject;
+	Shader::Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath) {
+		// 1. retrieve the vertex/fragment source code from filePath
+		std::string vertexCode;
+		std::string fragmentCode;
+		std::string geometryCode;
+		std::ifstream vShaderFile;
+		std::ifstream fShaderFile;
+		std::ifstream gShaderFile;
 
-		std::string strVertexShader = functions.loadFile(vertexShaderName);
-		GLuint vertexShader = LoadShader(GL_VERTEX_SHADER, strVertexShader.c_str());
+		// ensure ifstream objects can throw exceptions:
+		vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		try
+		{
+			// open files
+			vShaderFile.open(vertexPath);
+			fShaderFile.open(fragmentPath);
+			std::stringstream vShaderStream, fShaderStream;
+			// read file's buffer contents into streams
+			vShaderStream << vShaderFile.rdbuf();
+			fShaderStream << fShaderFile.rdbuf();
+			// close file handlers
+			vShaderFile.close();
+			fShaderFile.close();
+			// convert stream into string
+			vertexCode = vShaderStream.str();
+			fragmentCode = fShaderStream.str();
+			// if geometry shader path is present, also load a geometry shader
+			if (geometryPath != nullptr)
+			{
+				gShaderFile.open(geometryPath);
+				std::stringstream gShaderStream;
+				gShaderStream << gShaderFile.rdbuf();
+				gShaderFile.close();
+				geometryCode = gShaderStream.str();
+			}
+		}
+		catch (std::ifstream::failure e)
+		{
+			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		}
+		const char* vShaderCode = vertexCode.c_str();
+		const char * fShaderCode = fragmentCode.c_str();
 
-		std::string strFragmentShader = functions.loadFile(fragmentShaderName);
-		GLuint fragmentShader = LoadShader(GL_FRAGMENT_SHADER, strFragmentShader.c_str());
+		// 2. compile shaders
+		unsigned int vertex, fragment;
+		// vertex shader
+		vertex = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertex, 1, &vShaderCode, NULL);
+		glCompileShader(vertex);
+		checkCompileErrors(vertex, "VERTEX");
+		// fragment Shader
+		fragment = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragment, 1, &fShaderCode, NULL);
+		glCompileShader(fragment);
+		checkCompileErrors(fragment, "FRAGMENT");
+		// if geometry shader is given, compile geometry shader
+		unsigned int geometry;
+		if (geometryPath != nullptr)
+		{
+			const char * gShaderCode = geometryCode.c_str();
+			geometry = glCreateShader(GL_GEOMETRY_SHADER);
+			glShaderSource(geometry, 1, &gShaderCode, NULL);
+			glCompileShader(geometry);
+			checkCompileErrors(geometry, "GEOMETRY");
+		}
 
-		glAttachShader(programObject, vertexShader);
-		glAttachShader(programObject, fragmentShader);
+		// shader Program
+		id = glCreateProgram();
+		glAttachShader(id, vertex);
+		glAttachShader(id, fragment);
+		if (geometryPath != nullptr)
+			glAttachShader(id, geometry);
+		glLinkProgram(id);
+		checkCompileErrors(id, "PROGRAM");
 
-		glLinkProgram(programObject);
+		// delete the shaders as they're linked into our program now and no longer necessery
+		glDeleteShader(vertex);
+		glDeleteShader(fragment);
+		if (geometryPath != nullptr)
+			glDeleteShader(geometry);
 
-		glDeleteShader(vertexShader);
-		glDeleteShader(fragmentShader);
-
-		// use shader
-		unsigned int VBO, VAO, EBO;
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EBO);
-		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-		glBindVertexArray(VAO);
-
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-
-		// position
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		// textures
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-		// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-		// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-		glBindVertexArray(0);
-
-		// uncomment this call to draw in wireframe polygons.
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glBindVertexArray(VAO);
+	}
+	// activate the shader
+	// ------------------------------------------------------------------------
+	void Shader::use() {
+		glUseProgram(id);
 	}
 
-	GLuint Shader::LoadShader(GLenum type, const char *shaderSrc) {
-		// Create the shader object
-		GLuint shader = glCreateShader(type);
-		if (shader == 0) return 0;
-
-		// Load the shader source
-		glShaderSource(shader, 1, &shaderSrc, NULL);
-		// Compile the shader
-		glCompileShader(shader);
-		// Check the compile status
-		GLint compiled;
-		glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-		if (!compiled) {
-			GLint infoLen = 0;
-			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-			if (infoLen > 1) {
-				char* infoLog = (char*)malloc(sizeof(char) * infoLen);
-				glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
-				std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << "\n";
-				free(infoLog);
+	void Shader::checkCompileErrors(GLuint shader, std::string type) {
+		GLint success;
+		GLchar infoLog[1024];
+		if (type != "PROGRAM")
+		{
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+			if (!success)
+			{
+				glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+				std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
 			}
-			glDeleteShader(shader);
-			return 0;
 		}
-		return shader;
+		else
+		{
+			glGetProgramiv(shader, GL_LINK_STATUS, &success);
+			if (!success)
+			{
+				glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+				std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+			}
+		}
 	}
 }
